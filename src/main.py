@@ -57,9 +57,7 @@ def parser():
         print('Error')
         print(html)
     b = time.time()-a
-    n = b//60
-    m = (b % 60) / 60
-    print(f'Scraping {pagination} pages took {b: .2f} seconds or {(n + m): .2f} minutes')
+    print(f'Scraping {pagination} pages took {b: .2f} seconds or {(b/60): .3f} minutes')
 
 
 if __name__ == "__main__":
