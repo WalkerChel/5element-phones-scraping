@@ -1,24 +1,29 @@
 import time
 
 import httpx
-from bs4 import BeautifulSoup as BS
+from bs4 import BeautifulSoup as Bs
 import csv
 
-CSV = 'phones.csv'
+CSV = 'hones.csv'
 HOST = "https://5element.by"
-URL = "https://5element.by/catalog/377-smartfony/"
+URL = "https://5element.by/catalog/377-smartfony?items=100"
 HEADERS = {
-    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 OPR/96.0.0.0 (Edition Yx 06)'
+    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,'
+              'application/signed-exchange;v=b3;q=0.7',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                  'Chrome/110.0.0.0 Safari/537.36 OPR/96.0.0.0 (Edition Yx 06)'
           }
 
-def get_params(url, params = ''):
-    page_responce = httpx.get(url, headers=HEADERS, params=params)
-    return page_responce
+
+def get_params(url, params=None):
+    if params is None:
+        params = {"None": None}
+    page_response = httpx.get(url, headers=HEADERS, params=params)
+    return page_response
 
 
 def get_content(html):
-    soup = BS(html, 'html.parser')
+    soup = Bs(html, 'html.parser')
     items = soup.find_all('div', class_='catalog-item ec-product-item')
     phones = []
 
@@ -33,12 +38,14 @@ def get_content(html):
         )
     return phones
 
+
 def save_doc(items, path):
     with open(path, 'w', newline='') as file:
         writer = csv.writer(file, delimiter=';')
         writer.writerow(['Name of the product', "price (BYN)", 'link', 'image link'])
         for item in items:
             writer.writerow([item['title'], item['price'], item['link_product'], item['image']])
+
 
 def parser():
     pagination = input('Write number of pages:')
